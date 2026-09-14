@@ -77,15 +77,6 @@ Three channels (actions, conditions, materials), each min-max normalised before 
 
 **Smoothing.** 5-year centred rolling mean, with raw yearly points drawn underneath at low alpha so the smoothing is visible rather than hidden. Years with fewer than 50 procedures are dropped; the early and late edges of the corpus are thin and produce meaningless spikes.
 
-## Known limitations
-
-- **The 2009 split is a bad instrument.** A paper published in 2009 cannot plausibly move compounds appearing in 2010 patents — med-chem programmes run for years and filing lags bench work. A causal effect should appear as a gradual bend some years *after* 2009, not a step at it. A pre/post split will also report "significant" for any monotonic trend already underway in 1995. The line on the plot is a reference marker, not a treatment date.
-- **Composition, not chemistry.** The mix of what gets patented changes over 45 years. A rising Fsp3 could be the corpus shifting underneath the analysis rather than any given programme going more 3D. Wants a within-therapeutic-area cut.
-- **Survivorship in the source data.** See above; patents record what worked.
-- **Yield is self-reported** in patent text, with no incentive to be conservative.
-- **Fsp3 rewards floppiness**, which is why chiral centres are on the second axis — and worth checking whether the two curves agree before leaning on either.
-- **Materials extraction is the noisiest channel.** The source paper reports MATERIALS at ~91.5% F1 / 88.2% recall against OPERATIONS at ~98.2% F1, and `mat_score` happens to be the largest of the three complexity channels in magnitude. Some of the weak Fsp3-vs-complexity correlation is measurement noise.
-
 ## Next
 
 - Changepoint detection or interrupted time-series with a lag term, replacing the pre/post-2009 split.
@@ -93,22 +84,21 @@ Three channels (actions, conditions, materials), each min-max normalised before 
 - Regress Fsp3 on heavy atom count, to separate size from shape.
 - Within-therapeutic-area cut to control for corpus composition.
 
-## Repo contents
-
-```
-flatland_analysis_1.ipynb   Main analysis: load → complexity score → Fsp3 → year mapping → tests → plots
-Data_Exploration.ipynb      Initial schema walkthrough and sanity checks
-Data/                       Source datasets (see above)
-```
-
 ## Running it
 
+First, download the original datasets mentioned in file 'flatten_pm_daatset.ipynb'. Unzip the contents into a folder of your choosing. This is a huge file so give it ~15 mins to finish unzipping.
+
+Next, download the required libraries -
 ```bash
 pip install pandas numpy scipy matplotlib seaborn rdkit openpyxl tqdm
 jupyter lab flatland_analysis_1.ipynb
 ```
 
-Run cells in order. The RDKit extraction cell must complete before the patent-year mapping cell — running them out of sequence produces an empty `yearly_trends` and a silent `nan` year range.
+In a separate location, generate the table CSVs using file 'flatland_pm_dataset.ipynb'. The uncompressed data is even larger, this step could take ~1hr to complete.
+
+Download and place file 'patent_number_year_crosswalk.xlsx' at the same location as the CSVs you just created.
+
+Lastly, run each cell in 'flatland_analysis_with_markdown.ipynb' in order.
 
 ## Sources
 
